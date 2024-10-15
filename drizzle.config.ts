@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     url: env.POSTGRES_URL,
   },
-  tablesFilter: ["fbthing_*"],
+  tablesFilter: ["zapline_*"],
 } satisfies Config;

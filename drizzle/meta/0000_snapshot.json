@@ -1,11 +1,11 @@
 {
-  "id": "46185bea-89e6-474e-ba6d-76f5be1331eb",
+  "id": "62918260-f5ac-40f5-a900-5e2ec1df8403",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
-    "public.fbthing_feedback_item": {
-      "name": "fbthing_feedback_item",
+    "public.zapline_conversation": {
+      "name": "zapline_conversation",
       "schema": "",
       "columns": {
         "id": {
@@ -15,33 +15,64 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "form_id": {
-          "name": "form_id",
+        "voicebot_id": {
+          "name": "voicebot_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "type": {
-          "name": "type",
-          "type": "varchar(50)",
+        "customer_id": {
+          "name": "customer_id",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_phone": {
+          "name": "customer_phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },
-        "rating": {
-          "name": "rating",
+        "end_time": {
+          "name": "end_time",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duration": {
+          "name": "duration",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "feedback": {
-          "name": "feedback",
+        "message_count": {
+          "name": "message_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "transcript": {
+          "name": "transcript",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "screenshot": {
-          "name": "screenshot",
-          "type": "text",
+        "sentiment": {
+          "name": "sentiment",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "outcome": {
+          "name": "outcome",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
@@ -54,28 +85,21 @@
         }
       },
       "indexes": {
-        "form_id_idx": {
-          "name": "form_id_idx",
+        "voicebot_id_idx": {
+          "name": "voicebot_id_idx",
           "columns": [
-            "form_id"
-          ],
-          "isUnique": false
-        },
-        "type_idx": {
-          "name": "type_idx",
-          "columns": [
-            "type"
+            "voicebot_id"
           ],
           "isUnique": false
         }
       },
       "foreignKeys": {
-        "fbthing_feedback_item_form_id_fbthing_form_id_fk": {
-          "name": "fbthing_feedback_item_form_id_fbthing_form_id_fk",
-          "tableFrom": "fbthing_feedback_item",
-          "tableTo": "fbthing_form",
+        "zapline_conversation_voicebot_id_zapline_voicebot_id_fk": {
+          "name": "zapline_conversation_voicebot_id_zapline_voicebot_id_fk",
+          "tableFrom": "zapline_conversation",
+          "tableTo": "zapline_voicebot",
           "columnsFrom": [
-            "form_id"
+            "voicebot_id"
           ],
           "columnsTo": [
             "id"
@@ -87,8 +111,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.fbthing_form": {
-      "name": "fbthing_form",
+    "public.zapline_usage": {
+      "name": "zapline_usage",
       "schema": "",
       "columns": {
         "id": {
@@ -98,91 +122,42 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "project_id": {
-          "name": "project_id",
+        "voicebot_id": {
+          "name": "voicebot_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "title": {
-          "name": "title",
-          "type": "varchar(256)",
+        "total_conversations": {
+          "name": "total_conversations",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": 0
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "total_messages": {
+          "name": "total_messages",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": 0
         },
-        "created_at": {
-          "name": "created_at",
+        "total_duration": {
+          "name": "total_duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "period_start": {
+          "name": "period_start",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "CURRENT_TIMESTAMP"
+          "notNull": true
         },
-        "updated_at": {
-          "name": "updated_at",
+        "period_end": {
+          "name": "period_end",
           "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "project_id_idx": {
-          "name": "project_id_idx",
-          "columns": [
-            "project_id"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "fbthing_form_project_id_fbthing_project_id_fk": {
-          "name": "fbthing_form_project_id_fbthing_project_id_fk",
-          "tableFrom": "fbthing_form",
-          "tableTo": "fbthing_project",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.fbthing_project": {
-      "name": "fbthing_project",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "domain": {
-          "name": "domain",
-          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
@@ -192,37 +167,24 @@
           "primaryKey": false,
           "notNull": true,
           "default": "CURRENT_TIMESTAMP"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {
-        "user_id_idx": {
-          "name": "user_id_idx",
+        "usage_id_idx": {
+          "name": "usage_id_idx",
           "columns": [
-            "user_id"
-          ],
-          "isUnique": false
-        },
-        "domain_idx": {
-          "name": "domain_idx",
-          "columns": [
-            "domain"
+            "id"
           ],
           "isUnique": false
         }
       },
       "foreignKeys": {
-        "fbthing_project_user_id_fbthing_user_id_fk": {
-          "name": "fbthing_project_user_id_fbthing_user_id_fk",
-          "tableFrom": "fbthing_project",
-          "tableTo": "fbthing_user",
+        "zapline_usage_voicebot_id_zapline_voicebot_id_fk": {
+          "name": "zapline_usage_voicebot_id_zapline_voicebot_id_fk",
+          "tableFrom": "zapline_usage",
+          "tableTo": "zapline_voicebot",
           "columnsFrom": [
-            "user_id"
+            "voicebot_id"
           ],
           "columnsTo": [
             "id"
@@ -234,16 +196,15 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.fbthing_user": {
-      "name": "fbthing_user",
+    "public.zapline_user": {
+      "name": "zapline_user",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "varchar(256)",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "first_name": {
           "name": "first_name",
@@ -262,6 +223,18 @@
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
+        },
+        "store_name": {
+          "name": "store_name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "store_url": {
+          "name": "store_url",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -282,44 +255,26 @@
           "primaryKey": false,
           "notNull": false
         },
-        "transaction_id": {
-          "name": "transaction_id",
-          "type": "varchar(256)",
+        "subscription_status": {
+          "name": "subscription_status",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
-        "customer_id": {
-          "name": "customer_id",
-          "type": "varchar(256)",
+        "subscription_plan": {
+          "name": "subscription_plan",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
-        "subscription_created_at": {
-          "name": "subscription_created_at",
+        "subscription_start_date": {
+          "name": "subscription_start_date",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
-        "subscription_updated_at": {
-          "name": "subscription_updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "subscription_started_at": {
-          "name": "subscription_started_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "subscription_first_billed_at": {
-          "name": "subscription_first_billed_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "subscription_next_billed_at": {
-          "name": "subscription_next_billed_at",
+        "subscription_end_date": {
+          "name": "subscription_end_date",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
@@ -337,14 +292,109 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "fbthing_user_email_unique": {
-          "name": "fbthing_user_email_unique",
+        "zapline_user_email_unique": {
+          "name": "zapline_user_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
           ]
         }
       }
+    },
+    "public.zapline_voicebot": {
+      "name": "zapline_voicebot",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "voice": {
+          "name": "voice",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "language": {
+          "name": "language",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "settings": {
+          "name": "settings",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "user_id_idx": {
+          "name": "user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "zapline_voicebot_user_id_zapline_user_id_fk": {
+          "name": "zapline_voicebot_user_id_zapline_user_id_fk",
+          "tableFrom": "zapline_voicebot",
+          "tableTo": "zapline_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
   "enums": {},

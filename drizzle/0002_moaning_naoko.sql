@@ -1,1 +1,0 @@
-ALTER TABLE "fbthing_project" ALTER COLUMN "user_id" SET DATA TYPE varchar(256);
