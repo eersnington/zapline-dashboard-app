@@ -8,12 +8,12 @@ export function Footer() {
         <div className="flex items-center space-x-2">
           <Image
             src="/apple-touch-icon.png"
-            alt="FeedbackThing Logo"
+            alt="ZaplineAI Logo"
             width={24}
             height={24}
           />
           <p className="text-sm text-gray-500">
-            © 2024 FeedbackThing. All rights reserved.
+            © 2024 Zapline AI. All rights reserved.
           </p>
         </div>
         <nav className="mt-4 flex gap-4 sm:gap-6 md:mt-0">
@@ -37,7 +37,7 @@ export function Footer() {
           </Link>
           <Link
             className="text-sm text-gray-500 hover:text-gray-900"
-            href="mailto:support@feedbackthing.pro"
+            href="mailto:support@zaplineai.com"
           >
             Contact Us
           </Link>
