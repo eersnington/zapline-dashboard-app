@@ -1,106 +1,101 @@
 // app/dashboard/page.tsx
-import { Suspense } from "react";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { db } from "@/server/db";
+import { users, voicebots } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import FeedbackStats from "../_components/feedback-stats";
-import RecentFeedbackTable from "../_components/recent-feedback";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function DashboardPage() {
-  return (
-    <>
-      <h2 className="mb-6 text-2xl font-bold">Overview</h2>
+async function getDashboardData(userId: string) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+  });
 
-      {/* Summary Cards */}
-      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-        <Suspense fallback={<FeedbackStatsSkeleton />}>
-          <FeedbackStats />
-        </Suspense>
-      </div>
+  const userVoicebots = await db.query.voicebots.findMany({
+    where: eq(voicebots.userId, userId),
+  });
 
-      {/* Recent Feedback Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Feedback</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<RecentFeedbackTableSkeleton />}>
-            <RecentFeedbackTable />
-          </Suspense>
-        </CardContent>
-      </Card>
-    </>
-  );
+  return { user, voicebots: userVoicebots };
 }
 
-function RecentFeedbackTableSkeleton() {
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>
-            <Skeleton className="h-4 w-[100px]" />
-          </TableHead>
-          <TableHead>
-            <Skeleton className="h-4 w-[100px]" />
-          </TableHead>
-          <TableHead>
-            <Skeleton className="h-4 w-[80px]" />
-          </TableHead>
-          <TableHead>
-            <Skeleton className="h-4 w-[150px]" />
-          </TableHead>
-          <TableHead>
-            <Skeleton className="h-4 w-[80px]" />
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <TableRow key={i}>
-            <TableCell>
-              <Skeleton className="h-4 w-[100px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[100px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[80px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[150px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[80px]" />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
+export default async function DashboardPage() {
+  const { userId } = auth();
+  if (!userId) redirect("/sign-in");
 
-function FeedbackStatsSkeleton() {
+  const { user, voicebots } = await getDashboardData(userId);
+
+  if (!user?.storeName) redirect("/onboard");
+
   return (
-    <>
-      {[1, 2, 3].map((i) => (
-        <Card key={i}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-[100px]" />
-            <Skeleton className="h-4 w-4 rounded-full" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-7 w-[60px]" />
-          </CardContent>
-        </Card>
-      ))}
-    </>
+    <div className="min-h-screen bg-white font-sans text-black antialiased">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium">Store Info</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-semibold">{user.storeName}</p>
+              <p className="text-sm text-gray-600">{user.storeUrl}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium">Voicebots</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{voicebots.length}</p>
+              <p className="text-sm text-gray-600">Active Voicebots</p>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="text-lg font-medium">Usage</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">0</p>
+              <p className="text-sm text-gray-600">Total Conversations</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="mb-4 text-xl font-semibold">Your Voicebots</h2>
+          {voicebots.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {voicebots.map((bot) => (
+                <Card key={bot.id} className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-medium">
+                      {bot.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600">{bot.description}</p>
+                    <p className="mt-2 text-sm font-semibold">
+                      Status: {bot.status}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">
+              You haven&apos;t created any voicebots yet.
+            </p>
+          )}
+        </div>
+
+        <div className="mt-8">
+          <Button asChild>
+            <Link href="/voicebots/new">Create New Voicebot</Link>
+          </Button>
+        </div>
+      </main>
+    </div>
   );
 }
