@@ -5,8 +5,7 @@ import { db } from "@/server/db";
 import { users, voicebots } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import CreateVoiceBotBtn from "./voicebots/_components/CreateVoiceBot";
 
 async function getDashboardData(userId: string) {
   const user = await db.query.users.findFirst({
@@ -91,9 +90,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-8">
-          <Button asChild>
-            <Link href="/voicebots/new">Create New Voicebot</Link>
-          </Button>
+          <CreateVoiceBotBtn />
         </div>
       </main>
     </div>
