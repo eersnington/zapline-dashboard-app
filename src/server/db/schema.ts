@@ -19,8 +19,6 @@ export const users = createTable(
     firstName: varchar("first_name", { length: 256 }),
     lastName: varchar("last_name", { length: 256 }),
     email: varchar("email", { length: 256 }).notNull().unique(),
-    storeName: varchar("store_name", { length: 256 }),
-    storeUrl: varchar("store_url", { length: 256 }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -49,10 +47,10 @@ export const voicebots = createTable(
     userId: varchar("user_id", { length: 256 })
       .notNull()
       .references(() => users.id),
-    name: varchar("name", { length: 256 }).notNull(),
-    description: text("description"),
+    name: varchar("store_name", { length: 256 }).notNull(),
+    storeUrl: varchar("store_url", { length: 256 }),
     status: varchar("status", { length: 50 }).notNull().default("active"),
-    voice: varchar("voice", { length: 50 }), // e.g., 'male', 'female', specific voice ID
+    voice: varchar("voice", { length: 50 }),
     language: varchar("language", { length: 50 }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)

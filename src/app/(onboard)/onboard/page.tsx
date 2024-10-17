@@ -18,9 +18,9 @@ async function CheckOnboardStatus() {
     where: eq(users.id, userId),
   });
 
-  if (user?.storeName && user?.storeUrl) {
-    redirect("/dashboard");
-  }
+  // if (user?.storeName && user?.storeUrl) {
+  //   redirect("/dashboard");
+  // }
 
   return <OnboardForm />;
 }

@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import { MessageSquare, Clock, Bot, type LucideIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Component() {
   return (
@@ -9,16 +10,18 @@ export default function Component() {
       <div className="relative hidden flex-col justify-between overflow-hidden bg-white p-12 lg:flex lg:w-1/2">
         <div className="z-10 flex h-full flex-col">
           <div className="flex items-center">
-            <Image
-              src="/apple-touch-icon.png"
-              alt="ZaplineAI Logo"
-              width={32}
-              height={32}
-              className="rounded-md"
-            />
-            <span className="ml-3 text-2xl font-bold text-black">
-              Zapline AI
-            </span>
+            <Link href={"https://zaplineai.com"} className="flex flex-1">
+              <Image
+                src="/apple-touch-icon.png"
+                alt="ZaplineAI Logo"
+                width={32}
+                height={32}
+                className="rounded-md"
+              />
+              <span className="ml-3 text-2xl font-bold text-black">
+                Zapline AI
+              </span>
+            </Link>
           </div>
           <div className="flex flex-grow flex-col justify-center">
             <h1 className="text-5xl font-bold leading-tight text-black">
@@ -86,13 +89,19 @@ export default function Component() {
           </div>
           <div className="mt-6 text-center text-sm text-gray-400">
             By signing up, you agree to our{" "}
-            <a href="#" className="text-[#b8ff29] hover:text-[#a1e023]">
+            <Link
+              href="/terms"
+              className="text-[#b8ff29] hover:text-[#a1e023] hover:underline"
+            >
               Terms of Service
-            </a>{" "}
+            </Link>{" "}
             and{" "}
-            <a href="#" className="text-[#b8ff29] hover:text-[#a1e023]">
+            <Link
+              href="/privacy"
+              className="text-[#b8ff29] hover:text-[#a1e023] hover:underline"
+            >
               Privacy Policy
-            </a>
+            </Link>
           </div>
         </div>
       </div>

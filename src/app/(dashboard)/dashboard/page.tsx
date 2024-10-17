@@ -26,7 +26,7 @@ export default async function DashboardPage() {
 
   const { user, voicebots } = await getDashboardData(userId);
 
-  if (!user?.storeName) redirect("/onboard");
+  // if (!user?.storeName) redirect("/onboard");
 
   return (
     <div className="min-h-screen bg-white font-sans text-black antialiased">
@@ -37,8 +37,8 @@ export default async function DashboardPage() {
               <CardTitle className="text-lg font-medium">Store Info</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-semibold">{user.storeName}</p>
-              <p className="text-sm text-gray-600">{user.storeUrl}</p>
+              <p className="font-semibold">Placeholder</p>
+              <p className="text-sm text-gray-600">{"Placeholder"}</p>
             </CardContent>
           </Card>
 
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600">{bot.description}</p>
+                    <p className="text-sm text-gray-600">{bot.storeUrl}</p>
                     <p className="mt-2 text-sm font-semibold">
                       Status: {bot.status}
                     </p>
